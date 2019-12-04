@@ -31,7 +31,7 @@ To deconvolve the dataset, signature marker genes must be known in advance.
 
 ```r
 
-fractions <- deconSeq(data, markerRes$sigMatrix$sig.mat, verbose = TRUE)
+fractions <- deconSeq(shen_orr$data, markerRes$sigMatrix$sig.mat, verbose = TRUE)
 
 ```
 ![LinDeconSeq\_fractions](data/fractions.png)
