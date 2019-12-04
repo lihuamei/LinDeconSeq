@@ -1,8 +1,8 @@
-# LinDeconSeq
+LinDeconSeq
 ===================================================
 
 Cell Type Deconvolution using gene expression data for bulk samples.
-![LinDeconSeq\_pipeline](pipeline.png)
+![LinDeconSeq\_pipeline](pipeline.jpg)
 
 # Installing the package
 ---------------------
