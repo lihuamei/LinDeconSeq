@@ -10,7 +10,7 @@ LazyData: true
 Imports:
     DESeq2,
     edgeR,
-	metaseqR,
+    metaseqR,
     pbapply,
     progress,
     dplyr,
