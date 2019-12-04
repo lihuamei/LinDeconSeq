@@ -2,7 +2,7 @@ LinDeconSeq
 ===================================================
 
 Cell Type Deconvolution using gene expression data for bulk samples.
-![LinDeconSeq\_pipeline](pipeline.jpg)
+![LinDeconSeq\_pipeline](data/pipeline.jpg)
 
 # Installing the package
 ---------------------
@@ -22,5 +22,16 @@ library(LinDeconSeq)
 pures <- shen_orr$data[, rowSums(shen_orr$annotation$pure) != 0 ]
 markerRes <- findMarkers(pures, shen_orr$phenotypes, min.group = 100, max.group = 300, norm.method = 'QN', data.type = 'MA')
 
+
+```
+
+# Deconvolution
+----------------------------
+To deconvolve the dataset, signature marker genes must be known in advance.
+
+```r
+
+fractions <- deconSeq(data, markerRes$sigMatrix$sig.mat, verbose = TRUE)
+![LinDeconSeq\_fractions](data/fractions.png)
 
 ```
