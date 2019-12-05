@@ -3,7 +3,7 @@ Title: Cell Type Deconvolution using gene expression data for bulk samples.
 Version: 0.1
 Authors@R: c(person("Huamei", "Li", email = "230179525@seu.edu.cn", role = c("aut", "cre")))
 Description: Estimate cell type proportions of bulk samples using reference-based method for high-throughput sequencing data.
-Depends: R (>= 3.5.3)
+Depends: R (>= 3.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
