@@ -51,7 +51,7 @@ VST2Norm <- function(X) {
 #' @param method Specified normalize method, support QN, TPM and None. default: QN.
 #' @param data.type Data type, RNASeq, MA or PEAK, default: RNASeq.
 #' @return Normalized data (matrix).
-#' @export normalize_data
+#' @export normalizeData
 ################################################################################
 
 normalizeData <- function(X, phes =NULL, method = c('QN', 'NONE', 'TPM', 'DESeq2', 'CPM', 'VST'), data.type = 'RNASeq') {

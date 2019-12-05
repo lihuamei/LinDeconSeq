@@ -6,8 +6,7 @@
 #' @param outdir Output directory, default: current work direcory.
 #' @param verbose logical, to print the detailed information for each iteration.
 #' @return Fractions of bulk sample
-#' @examples
-#' @export deconseq
+#' @export deconSeq
 
 ##########################################################################################################
 deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, outdir = './', prefix = 'LinDeconSeq', verbose = TRUE) {

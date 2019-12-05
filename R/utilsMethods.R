@@ -58,7 +58,6 @@ addNames <- function(X, row.names = NULL, col.names = NULL) {
 #' @description Calculate log-fold change distance of vector
 #' @param vals A vector of values.
 #' @return Log-fold change distance result.
-#' @export get_shannon_dist
 ################################################################################
 calcLogFC <- function(vals) {
     max.idx <- which.max(vals)
@@ -72,7 +71,7 @@ calcLogFC <- function(vals) {
 #' @description Select top N rows of each subsets from data list
 #' @param data.lst Data list that includes various phenotype class subsets.
 #' @param top.num Top N rows need to be selected.
-#' @pamra fields Fields of each subsets.
+#' @param fields Fields of each subsets.
 #' @return Selected subsets from data list.
 ################################################################################
 

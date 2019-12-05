@@ -33,6 +33,7 @@
 }
 
 ################################################################################
+#' @name deriveDEGenes
 #' @description Derive cell type-specific genes based Shannon Entropy distance.
 #' @param X Expression data of each cell type are intergrated into a single data matrix.
 #' @param q.cut Threashold q.value to filter out cell type-specific genes, default: 0.01.
