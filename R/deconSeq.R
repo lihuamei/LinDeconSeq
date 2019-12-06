@@ -1,6 +1,6 @@
 ##########################################################################################################
 #' @title deconSeq
-#' @description Cell type deoovolution for bulk samples based on EPIC method.
+#' @description Cell type deoovolution for bulk samples based on weighted RLM method.
 #' @param bulk bulk gene expression (gene x subject x measure).
 #' @param pures cell type-specific gene expression matrice of cell types.
 #' @param outdir Output directory, default: current work direcory.
