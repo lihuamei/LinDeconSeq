@@ -196,7 +196,7 @@ findMarkers <- function(refs, phes, min.group = 50, max.group = 200, norm.method
     println('[INFO] There are %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
     refs.norm <- refs[rowSums(refs) > 0, ] %>% normalizeData(., phes, norm.method, data.type = data.type)
 
-    ref.grouped   <- prerpocessExpr(refs.norm, phes, method = 'median')	
+    ref.grouped   <- prerpocessExpr(refs.norm, phes, method = 'mean')	
     ctsgs.infos   <- deriveDEGenes(ref.grouped, q.cut = q.cut, verbose = verbose)
     bg.genes.expr <- ref.grouped[!(rownames(ref.grouped) %in% rownames(ctsgs.infos$DEG)), ]
     cell.markers  <- assignedCellMarkers(ctsgs.infos, bg.genes.expr, p.cut = p.cut, verbose = verbose)
