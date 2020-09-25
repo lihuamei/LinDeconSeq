@@ -14,5 +14,8 @@ Imports:
     pbapply,
     progress,
     dplyr,
-    MASS
+    MASS,
+	preprocessCore,
+	fitdistrplus
+
 RoxygenNote: 6.1.1
