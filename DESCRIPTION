@@ -16,6 +16,5 @@ Depends:
     dplyr,
     MASS,
 	preprocessCore,
-	fitdistrplus
-
-RoxygenNote: 6.1.1
+	fitdistrplus,
+RoxygenNote: 7.1.0
