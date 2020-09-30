@@ -17,7 +17,6 @@ devtools::install_github("lihuamei/LinDeconSeq")
 In this tutorial we will use GSE19830 (mixture of Liver, Brain and Lung) as an example.
 
 ``` r
-library(dplyr)
 library(LinDeconSeq)
 pures <- shen_orr$data[, rowSums(shen_orr$annotation$pure) != 0 ] %>% t
 markerRes <- findMarkers(pures[, colnames(shen_orr$phenotype)], shen_orr$phenotype, min.group = 100, max.group = 300, norm.method = 'QN', data.type = 'MA')
@@ -31,7 +30,7 @@ To deconvolve the dataset, signature marker genes must be known in advance.
 
 ```r
 
-fractions <- deconSeq(shen_orr$data, markerRes$sigMatrix$sig.mat, verbose = TRUE)
+fractions <- deconSeq(shen_orr$data %>% t, markerRes$sigMatrix$sig.mat, verbose = TRUE)
 
 ```
 ![LinDeconSeq\_fractions](data/fractions.png)
