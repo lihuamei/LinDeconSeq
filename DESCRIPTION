@@ -8,13 +8,17 @@ License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Depends:
-    DESeq2,
-    edgeR,
-    metaseqR,
-    pbapply,
-    progress,
-    dplyr,
-    MASS,
+	DESeq2,
+	edgeR,
+	metaseqR,
+	pbapply,
+	progress,
+	dplyr,
+	MASS,
 	preprocessCore,
 	fitdistrplus,
+Suggests:
+	devtools,
+	roxygen2,
+	testthat
 RoxygenNote: 7.1.0
