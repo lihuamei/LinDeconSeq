@@ -19,8 +19,8 @@ In this tutorial we will use GSE19830 (mixture of Liver, Brain and Lung) as an e
 ``` r
 
 library(LinDeconSeq)
-pures <- shen_orr$data[, rowSums(shen_orr$annotation$pure) != 0 ]
-markerRes <- findMarkers(pures, shen_orr$phenotypes, min.group = 100, max.group = 300, norm.method = 'QN', data.type = 'MA')
+pures <- shen_orr$data[, rowSums(shen_orr$annotation$pure) != 0 ] %>% t
+markerRes <- findMarkers(pures, shen_orr$phenotype, min.group = 100, max.group = 300, norm.method = 'QN', data.type = 'MA')
 
 
 ```
