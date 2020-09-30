@@ -7,7 +7,7 @@ Depends: R (>= 3.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Imports:
+Depends:
     DESeq2,
     edgeR,
     metaseqR,
