@@ -4,8 +4,15 @@
 \alias{deconSeq}
 \title{deconSeq}
 \usage{
-deconSeq(bulks, signature, weight = TRUE, intercept = TRUE,
-  outdir = "./", prefix = "LinDeconSeq", verbose = TRUE)
+deconSeq(
+  bulks,
+  signature,
+  weight = TRUE,
+  intercept = TRUE,
+  outdir = "./",
+  prefix = "LinDeconSeq",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{outdir}{Output directory, default: current work direcory.}
@@ -20,5 +27,5 @@ deconSeq(bulks, signature, weight = TRUE, intercept = TRUE,
 Fractions of bulk sample
 }
 \description{
-Cell type deoovolution for bulk samples based on EPIC method.
+Cell type deoovolution for bulk samples based on weighted RLM method.
 }

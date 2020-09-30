@@ -4,9 +4,17 @@
 \alias{findMarkers}
 \title{Derive signature matrices.}
 \usage{
-findMarkers(refs, phes, min.group = 50, max.group = 200,
-  norm.method = "TPM", q.cut = 0.01, p.cut = 0.05,
-  data.type = "RNASeq", verbose = TRUE)
+findMarkers(
+  refs,
+  phes,
+  min.group = 50,
+  max.group = 200,
+  norm.method = "TPM",
+  q.cut = 0.01,
+  p.cut = 0.05,
+  data.type = "RNASeq",
+  verbose = TRUE
+)
 }
 \arguments{
 \item{refs}{Gene expression profile of each cell type, which rows represent genes and columns represent pure samples.}
