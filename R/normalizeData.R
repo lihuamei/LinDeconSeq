@@ -58,7 +58,7 @@ normalizeData <- function(X, phes =NULL, method = c('QN', 'NONE', 'TPM', 'DESeq2
     if (missing(X)) stop("[ERROR] argument 'X' is misiing, with no default")
     X <- as.matrix(X)
     if ('QN' == method) {
-        X.norm <- normalize.quantiles(X)   
+        X.norm <- preprocessCore::normalize.quantiles(X)   
         X.norm <- addNames(X.norm, rownames(X), colnames(X))
     } else if ('TPM' == method) {
         X.norm <- calcTpm(X)
