@@ -34,3 +34,7 @@ fractions <- deconSeq(shen_orr$data %>% t, markerRes$sigMatrix$sig.mat, verbose 
 
 ```
 ![LinDeconSeq\_fractions](data/fractions.png)
+
+# Citation
+----------------------------
+Please cite the publication: ***Li H, Sharma A, Ming W, et al. A deconvolution method and its application in analyzing the cellular fractions in acute myeloid leukemia samples[J]. BMC genomics, 2020, 21(1): 1-15.***<br>
