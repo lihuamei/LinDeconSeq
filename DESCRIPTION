@@ -1,6 +1,6 @@
 Package: LinDeconSeq
 Title: Cell Type Deconvolution using gene expression data for bulk samples.
-Version: 0.1
+Version: 0.2
 Authors@R: c(person("Huamei", "Li", email = "230179525@seu.edu.cn", role = c("aut", "cre")))
 Description: Estimate cell type proportions of bulk samples using reference-based method for high-throughput sequencing data.
 License: GPL-3

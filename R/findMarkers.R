@@ -168,8 +168,7 @@ optimizeSignatures <- function(X, cell.names, min.group = 50, max.group = 200) {
     return(list(sig.mat = sigmat.res, kappa = kapppa.vals, group.size = group.size))
 }
 
-################################################################################
-#' @title Derive signature matrices.
+#' @title Derive signature matrices based on purified gene expression profile.
 #' @description Derive signature marker genes by a series steps, including normalizing, filtered low confidence genes and DEG analysis.
 #' @param refs Gene expression profile of each cell type, which rows represent genes and columns represent pure samples.
 #' @param phes Phenotype classes. value 1 = indicate membership of the reference sample,
@@ -180,9 +179,8 @@ optimizeSignatures <- function(X, cell.names, min.group = 50, max.group = 200) {
 #' @param data.type Data type, RNASeq, MA or PEAK, default: RNASeq.
 #' @param verbose logical, to print the detailed information.
 #' @export findMarkers
-#' @return list
+#' @return A list of derived results.
 #'
-################################################################################
 
 findMarkers <- function(refs, phes, min.group = 50, max.group = 200, norm.method = 'TPM', q.cut = 0.01, p.cut = 0.05, data.type = 'RNASeq', verbose = TRUE) {
     if (data.type == 'PEAK') {
@@ -193,7 +191,7 @@ findMarkers <- function(refs, phes, min.group = 50, max.group = 200, norm.method
     }
     if (max(refs) < 50) refs <- 2^refs
     phes[phes == 2] <- 0
-    println('[INFO] There are %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
+    println('[INFO] %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
     refs.norm <- refs[rowSums(refs) > 0, ] %>% normalizeData(., phes, norm.method, data.type = data.type)
 
     ref.grouped   <- prerpocessExpr(refs.norm, phes, method = 'mean')	
