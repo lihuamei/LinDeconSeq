@@ -9,7 +9,6 @@ LazyData: true
 Depends:
 	DESeq2,
 	edgeR,
-	metaseqR2,
 	pbapply,
 	progress,
 	dplyr,
