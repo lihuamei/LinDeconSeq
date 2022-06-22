@@ -222,7 +222,7 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 		phes <- phes[, ovp.sns]
 		refs <- refs[, ovp.sns]
 	} else {
-		stop('No overlapping samples of gene expression and phenotype data.')
+		stop('No overlapping samples between expression profile and phenotype data.')
 	}
 	refs <- refs[rowSums(refs) > 0, ] %>% as.matrix
 		
