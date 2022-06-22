@@ -1,4 +1,4 @@
-################################################################################
+#' @name prerpocessExpr
 #' @description Expression data of each cell type are intergrated into a single data matrix, which rows are genes and columns are cell typs.
 #' @param X Normalized gene expression profile of each cell type, which rows represent genes and columns represent pure samples.
 #' @param phenotypes Phenotype classes. value 1 = indicate membership of the reference sample,
@@ -6,8 +6,7 @@
 #' @param method Merge replicates by specified method, default: mean.
 #' @param cv.cutoff Filtered out CV greater than threshold genes, default: 1.5.
 #' @return list of normalized expression matrix and weights [list]
-#'
-################################################################################
+#' @export
 
 prerpocessExpr <- function(X, phes, method = c('mean', 'median'), cv.cutoff = 1.5) {
     ref.grouped  <- c()

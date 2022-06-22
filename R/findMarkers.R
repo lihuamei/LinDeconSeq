@@ -1,19 +1,26 @@
-################################################################################
+#' @name .shannonEntropy
 #' @description Identify high variable genes and filter out
 #' @param X Expression matrix data of samples with the same cell type.
-#' @return Shannon entropy data.frame
-
-################################################################################
+#' @return Estimated shannon entropy (data.frame)
+#' @export 
 
 .shannonEntropy <- function(X) {
     nrep.sns  <- dim(X)[2]
     X.norm <- X / rowSums(X)
     X.mu <- rowMeans(X.norm)
-    weight.genes <- matrixStats::rowMaxs(X)
+    weight.genes <- rowMaxs(X)
     weight.genes <- tanh(0.1 * weight.genes / median(weight.genes))
     shannon.dist <- 1 / nrep.sns * rowSums(X.norm / X.mu * log2(X.norm / X.mu)) * weight.genes
     return(shannon.dist)
 }
+
+#' @name .calcScores
+#' @description Calculated co-linearity score based on seed genes.
+#' @param cell Cell type name.
+#' @param idx Index number of cell type.
+#' @return Calculated score
+#' @export 
+
 .calcScores <- function(x, seed.genes, cell, idx) {
     tmp.w <- log2(x[cell] / mean(x[-idx]))
     cor.v <- cor(x, seed.genes[[cell]])
@@ -21,6 +28,12 @@
     score <- cor.v^2 * 1 / (1 + exp(-tmp.w)) * sign
     return(score)
 }
+
+#' @name .fitNorm
+#' @description Fit normal distribution for shannon-entropy distance.
+#' @param x A vector of shannon-entropy distance.
+#' @return Estimated mu and sd of normal distribution (list)
+#' @export
 
 .fitNorm <- function(x) {
 	dor <- density(x, kernel = 'gaussian')
@@ -32,17 +45,15 @@
 	return(est.params)
 }
 
-################################################################################
 #' @name deriveDEGenes
 #' @description Derive cell type-specific genes based Shannon Entropy distance.
 #' @param X Expression data of each cell type are intergrated into a single data matrix.
 #' @param q.cut Threashold q.value to filter out cell type-specific genes, default: 0.01.
-#' @param verbose Print out filter information or not, default: FALSE.
+#' @param perm Number of permutation, default: 100.
 #' @return X.filtered
+#' @export
 
-################################################################################
-
-deriveDEGenes <- function(X, q.cut = 0.01, perm = 100, verbose = FALSE) {
+deriveDEGenes <- function(X, q.cut = 0.01, perm = 100) {
 	set.seed(2019)
     shannon.dist  <- .shannonEntropy(X)
     random.params <- sapply(1 : perm, function(pcnt) {
@@ -51,48 +62,54 @@ deriveDEGenes <- function(X, q.cut = 0.01, perm = 100, verbose = FALSE) {
         est.params <- .fitNorm(shannon.dist.random)
         return(est.params)
     }) %>% t %>% colMeans
-    p.raw  <- pnorm(shannon.dist, mean = random.params[1], sd = random.params[2], lower.tail = FALSE)
+    
+	p.raw  <- pnorm(shannon.dist, mean = random.params[1], sd = random.params[2], lower.tail = FALSE)
     q.vals <- p.adjust(p.raw, method = 'BH')
     X.degenes <- X[names(q.vals[q.vals <= q.cut]), ]
-    logFC.idx <- apply(X.degenes, 1, calcLogFC) %>% do.call(rbind.data.frame, .) %>% .[.$logFC < 10, ] %>%  as.matrix
+    logFC.idx <- apply(X.degenes, 1, calcLogFC) %>% do.call(rbind.data.frame, .) %>% as.matrix
     X.degenes <- X.degenes[rownames(logFC.idx), ]
-    println('[INFO] %d cell type specific genes have been detected with q.cut %f', verbose, dim(X.degenes)[1], q.cut)
-    return(list(DEG = X.degenes, adj.p = q.vals[rownames(X.degenes)], logFC = logFC.idx[, 1], topIdx = logFC.idx[, 2], ShannonDist = shannon.dist))
+    
+	return(
+		list(
+			DEG = X.degenes, 
+			adj.p = q.vals[rownames(X.degenes)], 
+			logFC = logFC.idx[, 1], 
+			topIdx = logFC.idx[, 2], 
+			shannonDist = shannon.dist
+		)
+	)
 }
 
-################################################################################
+#' @name assignedCellMarkers
 #' @description Assign cell type specific genes to each cell type.
 #' @param X Cell type specific gene expression matrix.
 #' @param bg.genes.expr Background gene expression for computing random scores.
 #' @param verbose  Print out information or not, default: FALSE.
 #' @return A list of cell markers.
-#'
-################################################################################
+#' @export
 
-assignedCellMarkers <- function(X, bg.genes.expr, p.cut = 0.05, do.perm = 10, verbose = FALSE) {  
+assignedCellMarkers <- function(X, bg.genes.expr, p.cut = 0.05, verbose = FALSE) {  
     set.seed(2019)	
-	rand.scores <- list(); seed.genes <- list()
-	bak.genes.expr <- bg.genes.expr
+	rand.scores <- seed.genes <- list()
     cell.names <- colnames(X$DEG)[sort(unique(X$topIdx))]
     
 	println('[INFO] Select seed genes and random permutating...', verbose = verbose)	
-	for (i in 1 : do.perm) {
-		tmp.genes.expr <- t(apply(bak.genes.expr, 1, sample)) 
-		bg.genes.expr  <- rbind(bg.genes.expr, tmp.genes.expr)
-	}
-	rownames(bg.genes.expr) <-  paste0('Gene.', 1 : dim(bg.genes.expr)[1])
-	bg.genes.expr <- bg.genes.expr[sample(rownames(bg.genes.expr)), ]
+	bg.genes.expr <- matrix(runif(10000 * ncol(bg.genes.expr), min = min(bg.genes.expr), max = max(bg.genes.expr)), nrow = 10000, ncol = ncol(bg.genes.expr))
+	rownames(bg.genes.expr) <- paste0('Gene.', 1 : dim(bg.genes.expr)[1])
+	colnames(bg.genes.expr) <- colnames(X$DEG) 
+
 	for (idx in unique(X$topIdx)) {        
 		tar.cell  <- colnames(X$DEG)[idx]
 		tmp.genes <- X$logFC[X$topIdx == idx] %>% sort %>% rev %>% names(.)
 		seed.genes[[tar.cell]] <- X$DEG[tmp.genes[1], ]
-		random.exprs <- bg.genes.expr[sample(rownames(bg.genes.expr), 10000), ]
-		random.exprs <- random.exprs[matrixStats::rowSds(as.matrix(random.exprs)) != 0, ]
-		rand.scores[[tar.cell]] <- apply(random.exprs, 1, function(x) {
+		random.exprs <- bg.genes.expr[sample(rownames(bg.genes.expr), 5000), ]
+		random.exprs <- random.exprs[rowSds(as.matrix(random.exprs)) != 0, ]
+		rand.scores[[tar.cell]] <- apply(random.exprs %>% data.frame, 1, function(x) {
 			score <- .calcScores(x, seed.genes, tar.cell, idx)
 		}) %>% sort
 	}
 	rm(bg.genes.expr)
+
     println('[INFO] Assigning cell type-specific genes to each cell subset', verbose)
     pb <- progress_bar$new(total = dim(X$DEG)[1], clear = TRUE)
     results <- sapply(rownames(X$DEG), function(gene) {
@@ -117,24 +134,25 @@ assignedCellMarkers <- function(X, bg.genes.expr, p.cut = 0.05, do.perm = 10, ve
     scores.df <- scores.df[rownames(X.marker.filtered), ]
     println('[INFO] %d low confidence marker genes have been filtered out.', verbose = verbose, dim(X$DEG)[1] - dim(X.marker.filtered)[1])
     
-    return(list(
-        score = scores.df,
-        markers = assigned.df[rownames(X.marker.filtered), ],
-        marker.expr = X.marker.filtered,
-        logFC       = X$logFC[rownames(scores.df)],
-        raw.marker = X$DEG)
+    return(
+		list(
+			score       = scores.df,
+			markers     = assigned.df[rownames(X.marker.filtered), ],
+			marker.expr = X.marker.filtered,
+			logFC       = X$logFC[rownames(scores.df)],
+			raw.marker  = X$DEG
+		)
     )
 }
 
-################################################################################
-#' Optimize the number of cell type-specific genes of each phnotype class to ensure the stability of the signature matrices.
+#' @name optimizeSignatures
+#' @description Optimize the number of cell type-specific genes of each phnotype class to ensure the stability of the signature matrices.
 #' @param X A list of cell markers that generated by the above step (assignedCellMarkers).
 #' @param cell.names Target cell names of each subset.
 #' @param min.group Minimum number of each phnotype class, default: 50.
 #' @param max.group Maximum number of each phnotype class, default: 200.
 #' @return Derived signature matrices.
-
-################################################################################
+#' @export
 
 optimizeSignatures <- function(X, cell.names, min.group = 50, max.group = 200) {
     X$markers <- sapply(rownames(X$markers), function(gene) {
@@ -168,46 +186,59 @@ optimizeSignatures <- function(X, cell.names, min.group = 50, max.group = 200) {
     return(list(sig.mat = sigmat.res, kappa = kapppa.vals, group.size = group.size))
 }
 
+#' @name findMarkers
 #' @title Derive signature matrices based on purified gene expression profile.
 #' @description Derive signature marker genes by a series steps, including normalizing, filtered low confidence genes and DEG analysis.
 #' @param refs Gene expression profile of each cell type, which rows represent genes and columns represent pure samples.
-#' @param phes Phenotype classes. value 1 = indicate membership of the reference sample,
-#' value 2 = indicates the class that the sample will be compared against.
-#' @param min.group Minimum number of each phnotype class, default: 50.
-#' @param max.group Maximum number of each phnotype class, default: 200.
-#' @param norm.method Select method to normalize reference profile [QN, TPM, CPM, DESeq2 or NONE], default: TPM (Transcript per million).
-#' @param data.type Data type, RNASeq, MA or PEAK, default: RNASeq.
+#' @param phes Phenotype classes. Cell type (Row) x Sample name (column); value 1 = indicate membership of the reference sample; Otherwise, value = 0. 
+#' @param QN Quantile normalization for expression profile or not, default: TRUE.
+#' @param q.cut Cutoff q-value for filtering candidate marker genes. default: 0.01.
+#' @param p.cut Cutoff p-value for assigning marker genes to cell type, default: 0.1.
+#' @opt.sigmat Optimizing singature matrix for deconvolution based on minimum kappa value, default: TRUE.
+#' @param min.group Minimum number of each phnotype class when optimizing signature matrix, default: 50.
+#' @param max.group Maximum number of each phnotype class when optimizing signature matrix, default: 200.
+#' @param QN Quantile normalization for expression profile or not, default: TRUE.
 #' @param verbose logical, to print the detailed information.
-#' @export findMarkers
 #' @return A list of derived results.
-#'
+#' @export findMarkers
 
-findMarkers <- function(refs, phes, min.group = 50, max.group = 200, norm.method = 'TPM', q.cut = 0.01, p.cut = 0.05, data.type = 'RNASeq', verbose = TRUE) {
-    if (data.type == 'PEAK') {
-        rownames(refs) <- paste(refs[, 1], refs[, 2], refs[, 3], sep = '_')
-        refs <- refs[, -c(1, 2, 3)]
-    } else if (data.type != 'RNASeq' && data.type != 'MA' && data.type != 'PEAK') {
-        stop('[ERROR] Data.type only supports gene and peak, exiting...')
-    }
-    if (max(refs) < 50) refs <- 2^refs
-    phes[phes == 2] <- 0
+findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.sigmat = TRUE, min.group = 50, max.group = 200, verbose = TRUE) {
+	if (!is.matrix(refs) && !is.data.frame(refs)) stop(sprintf("'%s' needs to be given as a matrix or data.frame", deparse(substitute(refs))))
+	if (!is.matrix(phes) && !is.data.frame(phes)) stop(sprintf("'%s' needs to be given as a matrix or data.frame", deparse(substitute(phes))))
+	if (nrow(refs) < 5000) println('[WARN] Number of genes less than 5000, the statistical power may not be sufficien.', println)
+	if (nrow(phes) < 2) stop(println('[ERROR] Number of cell types must be greater than 1.'))
+	if (max(refs) < 50) refs <- 2^refs
     println('[INFO] %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
-    refs.norm <- refs[rowSums(refs) > 0, ] %>% normalizeData(., phes, norm.method, data.type = data.type)
+    refs <- refs[rowSums(refs) > 0, ]
+	
+	# Quantile normalization or not. 
+	if (QN) {
+		refs.norm <- normalize.quantiles(refs)
+		refs.norm <- addNames(refs.norm, rownames(refs), colnames(refs))
+	} else refs.norm <- refs
+	rm(refs)
 
-    ref.grouped   <- prerpocessExpr(refs.norm, phes, method = 'mean')	
-    ctsgs.infos   <- deriveDEGenes(ref.grouped, q.cut = q.cut, verbose = verbose)
-    bg.genes.expr <- ref.grouped[!(rownames(ref.grouped) %in% rownames(ctsgs.infos$DEG)), ]
+    ref.grouped <- prerpocessExpr(refs.norm, phes, method = 'mean', cv.cutoff = 2.0)
+    ctsgs.infos <- deriveDEGenes(ref.grouped, q.cut = 0.05) 
+	println('[INFO] %d candidate cell type-specific genes detected with q.cut %g', verbose, nrow(ctsgs.infos$DEG), q.cut)
+
+	bg.genes.expr <- ref.grouped[!(rownames(ref.grouped) %in% rownames(ctsgs.infos$DEG)), ]
     cell.markers  <- assignedCellMarkers(ctsgs.infos, bg.genes.expr, p.cut = p.cut, verbose = verbose)
     println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
-    sig.marker.infos <- optimizeSignatures(
-        cell.markers         ,
-        colnames(ref.grouped),
-        min.group = min.group,
-        max.group = max.group
-    )
-    println('[INFO] Group size -> %d, condition number -> %f', verbose, sig.marker.infos$group.size, min(sig.marker.infos$kappa))
-    return(list(
-		cellMarkers = cell.markers[c('score', 'markers', 'marker.expr')], 
+    
+	if (opt.sigmat) {
+		sig.marker.infos <- optimizeSignatures(
+			cell.markers         ,
+			colnames(ref.grouped),
+			min.group = min.group,
+			max.group = max.group
+		)
+		println('[INFO] Group size -> %d, condition number -> %f', verbose, sig.marker.infos$group.size, min(sig.marker.infos$kappa))
+	} else {
+		sig.marker.infos <- NULL
+	}
+	return(list(
+		cellMarkers = cell.markers[c('markers', 'marker.expr')], 
 		sigMatrix   = sig.marker.infos
 	))
 }

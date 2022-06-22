@@ -1,15 +1,17 @@
-##########################################################################################################
-#' @title deconSeq
+#' @name deconSeq
+#' @title Deconvolution using w-RLM method.
 #' @description Cell type deoovolution for bulk samples based on weighted RLM method.
-#' @param bulk bulk gene expression (gene x subject x measure).
-#' @param pures cell type-specific gene expression matrice of cell types.
-#' @param outdir Output directory, default: current work direcory.
+#' @param bulks bulk gene expression (row = Genes, column = Samples).
+#' @param signature Signature matrix, i.e. cell type-specific gene expression matrice of cell types.
+#' @param weight Weight gene or not, default: TRUE.
+#' @param intercept Add intercept when using robust linear regression, default: TRUE.
+#' @param scale Scale bulk gene expression data or not, default: FALSE.
+#' @param QN Quantile normalize bulk expression profile or not, default: FALSE
 #' @param verbose logical, to print the detailed information for each iteration.
-#' @return Fractions of bulk sample
+#' @return A data.frame of fractions for bulk samples.
 #' @export deconSeq
 
-##########################################################################################################
-deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, outdir = './', prefix = 'LinDeconSeq', verbose = TRUE) {
+deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = FALSE, QN = FALSE, verbose = TRUE) {
     if (missing(bulks) || missing(signature)) {
         stop("[ERROR] bulk and pures must be fed simultaneously")
     }
@@ -19,14 +21,22 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, outdir =
     if (class(bulks) != 'data.frame' && class(bulks) != 'matrix') {
         stop('[ERROR] bulks must be data.frame or matrix, exiting...')
     }
-    ovp.genes <- intersect(rownames(signature), rownames(bulks))
-    signature <- signature[ovp.genes, ] %>% as.matrix
-    bulks <- bulks %>% .[ovp.genes, ]
-    if (max(signature) < 50) signature <- 2^signature
+	if (max(signature) < 50) signature <- 2^signature
     if (max(bulks) < 50) bulks <- 2^bulks
     if (min(signature) == 0) signature <- as.matrix(signature + 1)
     if (min(bulks) == 0) bulks <- bulks + 1
     println('[INFO] There are %d bulk samples need to be deconvoluted', verbose, dim(bulks)[2])
+	
+	if (QN) {
+		xx <- bulks
+        bulks <- normalize.quantiles(bulks)
+        bulks <- addNames(bulks, rownames(xx), colnames(xx))
+    }
+    if (scale) bulks <- scale(bulks)
+	
+	ovp.genes <- intersect(rownames(signature), rownames(bulks))
+    signature <- signature[ovp.genes, ] %>% as.matrix
+    bulks <- bulks %>% .[ovp.genes, ]
 
     est.res <- apply(bulks, 2, function(bulk) {
 		intercept <- ifelse(intercept, 1, 0) 
@@ -47,18 +57,6 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, outdir =
     })
 
     fractions <- addNames(est.res, row.names = colnames(signature), col.names = colnames(bulks)) %>% t
-    if (!is.null(outdir)) 
-    {
-        write.table(
-            fractions,
-            file = file.path(outdir, paste0(prefix, '-Results.xls')),
-            sep = '\t'                                         ,
-            quote = FALSE                                      ,
-            col.names = NA                                     ,
-            row.names = TRUE
-        )
-    }   
     if (verbose) print(fractions)
     return(fractions %>% data.frame)
 }
-

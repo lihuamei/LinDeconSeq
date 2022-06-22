@@ -2,29 +2,35 @@
 % Please edit documentation in R/deconSeq.R
 \name{deconSeq}
 \alias{deconSeq}
-\title{deconSeq}
+\title{Deconvolution using w-RLM method.}
 \usage{
 deconSeq(
   bulks,
   signature,
   weight = TRUE,
   intercept = TRUE,
-  outdir = "./",
-  prefix = "LinDeconSeq",
+  scale = FALSE,
+  QN = FALSE,
   verbose = TRUE
 )
 }
 \arguments{
-\item{outdir}{Output directory, default: current work direcory.}
+\item{bulks}{bulk gene expression (row = Genes, column = Samples).}
+
+\item{signature}{Signature matrix, i.e. cell type-specific gene expression matrice of cell types.}
+
+\item{weight}{Weight gene or not, default: TRUE.}
+
+\item{intercept}{Add intercept when using robust linear regression, default: TRUE.}
+
+\item{scale}{Scale bulk gene expression data or not, default: FALSE.}
+
+\item{QN}{Quantile normalize bulk expression profile or not, default: FALSE}
 
 \item{verbose}{logical, to print the detailed information for each iteration.}
-
-\item{bulk}{bulk gene expression (gene x subject x measure).}
-
-\item{pures}{cell type-specific gene expression matrice of cell types.}
 }
 \value{
-Fractions of bulk sample
+A data.frame of fractions for bulk samples.
 }
 \description{
 Cell type deoovolution for bulk samples based on weighted RLM method.

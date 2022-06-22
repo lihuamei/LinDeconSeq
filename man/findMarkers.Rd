@@ -2,38 +2,39 @@
 % Please edit documentation in R/findMarkers.R
 \name{findMarkers}
 \alias{findMarkers}
-\title{Derive signature matrices.}
+\title{Derive signature matrices based on purified gene expression profile.}
 \usage{
 findMarkers(
   refs,
   phes,
+  QN = TRUE,
+  q.cut = 0.01,
+  p.cut = 0.1,
+  opt.sigmat = TRUE,
   min.group = 50,
   max.group = 200,
-  norm.method = "TPM",
-  q.cut = 0.01,
-  p.cut = 0.05,
-  data.type = "RNASeq",
   verbose = TRUE
 )
 }
 \arguments{
 \item{refs}{Gene expression profile of each cell type, which rows represent genes and columns represent pure samples.}
 
-\item{phes}{Phenotype classes. value 1 = indicate membership of the reference sample,
-value 2 = indicates the class that the sample will be compared against.}
+\item{phes}{Phenotype classes. Cell type (Row) x Sample name (column); value 1 = indicate membership of the reference sample; Otherwise, value = 0.}
 
-\item{min.group}{Minimum number of each phnotype class, default: 50.}
+\item{QN}{Quantile normalization for expression profile or not, default: TRUE.}
 
-\item{max.group}{Maximum number of each phnotype class, default: 200.}
+\item{q.cut}{Cutoff q-value for filtering candidate marker genes. default: 0.01.}
 
-\item{norm.method}{Select method to normalize reference profile [QN, TPM, CPM, DESeq2 or NONE], default: TPM (Transcript per million).}
+\item{p.cut}{Cutoff p-value for assigning marker genes to cell type, default: 0.1.}
 
-\item{data.type}{Data type, RNASeq, MA or PEAK, default: RNASeq.}
+\item{min.group}{Minimum number of each phnotype class when optimizing signature matrix, default: 50.}
+
+\item{max.group}{Maximum number of each phnotype class when optimizing signature matrix, default: 200.}
 
 \item{verbose}{logical, to print the detailed information.}
 }
 \value{
-list
+A list of derived results.
 }
 \description{
 Derive signature marker genes by a series steps, including normalizing, filtered low confidence genes and DEG analysis.
