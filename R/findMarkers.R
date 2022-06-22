@@ -209,8 +209,16 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 	if (nrow(phes) < 2) stop(println('[ERROR] Number of cell types must be greater than 1.'))
 	if (max(refs) < 50) refs <- 2^refs
     println('[INFO] %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
-    refs <- refs[rowSums(refs) > 0, ]
-	
+	    
+	ovp.sns <- intersect(colnames(phes), colnames(refs))
+	if (length(ovp.sns) > 0) {
+		phes <- phes[, ovp.sns]
+		refs <- refs[, ovp.sns]
+	} else {
+		stop(println('[ERROR] No overlapping samples of gene expression and phenotype data.'))
+	}
+	refs <- refs[rowSums(refs) > 0, ] %>% as.matrix
+		
 	# Quantile normalization or not. 
 	if (QN) {
 		refs.norm <- normalize.quantiles(refs)
@@ -218,8 +226,9 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 	} else refs.norm <- refs
 	rm(refs)
 
-    ref.grouped <- prerpocessExpr(refs.norm, phes, method = 'mean', cv.cutoff = 2.0)
-    ctsgs.infos <- deriveDEGenes(ref.grouped, q.cut = 0.05) 
+    ref.grouped <- prerpocessExpr(refs.norm, phes %>% as.matrix, method = 'mean', cv.cutoff = 2.0)
+    ref.grouped[ref.grouped == 0] <- mean(ref.grouped)
+	ctsgs.infos <- deriveDEGenes(ref.grouped, q.cut = q.cut) 
 	println('[INFO] %d candidate cell type-specific genes detected with q.cut %g', verbose, nrow(ctsgs.infos$DEG), q.cut)
 
 	bg.genes.expr <- ref.grouped[!(rownames(ref.grouped) %in% rownames(ctsgs.infos$DEG)), ]

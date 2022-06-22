@@ -19,11 +19,11 @@ prerpocessExpr <- function(X, phes, method = c('mean', 'median'), cv.cutoff = 1.
     }
     ref.grouped <- addNames(ref.grouped, col.names = rownames(phes), row.names = rownames(X))
     ref.grouped <- ref.grouped[matrixStats::rowSds(ref.grouped) != 0, ]
-    X.sub <- X[rownames(ref.grouped), ]
+    X.sub <- data.frame(X)[rownames(ref.grouped), ]
 	
     max.indexes <- apply(ref.grouped, 1, which.max)
     cvs <- sapply(1 : dim(X.sub)[1], function(ind) {
-	    tmp.v <- X.sub[ind, which(phes[max.indexes[ind], ] == 1)]
+	    tmp.v <- X.sub[ind, which(phes[max.indexes[ind], ] == 1)] %>% unlist(.)
         cv <- sd(tmp.v) / mean(tmp.v) 
     })
     ref.grouped <- ref.grouped[which(cvs < cv.cutoff), ]

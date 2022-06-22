@@ -29,7 +29,7 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = 
 	
 	if (QN) {
 		xx <- bulks
-        bulks <- normalize.quantiles(bulks)
+        bulks <- normalize.quantiles(bulks %>% as.matrix)
         bulks <- addNames(bulks, rownames(xx), colnames(xx))
     }
     if (scale) bulks <- scale(bulks)
