@@ -237,6 +237,9 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
     println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
     
 	if (opt.sigmat) {
+		if (min.group > max.group) println("[WARN] 'min.group' size should be less than 'max.group' szie ")
+		if (min.group <= 0) stop(sprintf("'%s' must be greater than 0", deparse(substitute(min.group))))
+		if (max.group <= 0) stop(sprintf("'%s' must be greater than 0", deparse(substitute(max.group))))
 		sig.marker.infos <- optimizeSignatures(
 			cell.markers         ,
 			colnames(ref.grouped),
