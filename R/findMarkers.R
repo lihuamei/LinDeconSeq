@@ -209,7 +209,8 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 	if (nrow(phes) < 2) stop(println('[ERROR] Number of cell types must be greater than 1.'))
 	if (max(refs) < 50) refs <- 2^refs
     println('[INFO] %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
-	    
+	
+	rownames(phes) <- gsub('-', '.', rownames(phes))
 	ovp.sns <- intersect(colnames(phes), colnames(refs))
 	if (length(ovp.sns) > 0) {
 		phes <- phes[, ovp.sns]
