@@ -129,11 +129,8 @@ assignedCellMarkers <- function(X, bg.genes.expr, p.cut = 0.05, verbose = FALSE)
     )
     scores.df <- addNames(results[, seq(1, dim(results)[2], 2)], row.names = rownames(X$DEG), col.names = cell.names)
     assigned.df[pvals.df < p.cut] <- 1; assigned.df[pvals.df >= p.cut] <- 0
-    assigned.df <- assigned.df[rowSums(assigned.df) > 0, ]
     X.marker.filtered <- resortMatrix(X$DEG[rownames(assigned.df), ], X$topIdx[rownames(assigned.df)], cell.names)
     scores.df <- scores.df[rownames(X.marker.filtered), ]
-    println('[INFO] %d low confidence marker genes have been filtered out.', verbose = verbose, dim(X$DEG)[1] - dim(X.marker.filtered)[1])
-    
     return(
 		list(
 			score       = scores.df,
@@ -240,12 +237,15 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 
 	bg.genes.expr <- ref.grouped[!(rownames(ref.grouped) %in% rownames(ctsgs.infos$DEG)), ]
     cell.markers  <- assignedCellMarkers(ctsgs.infos, bg.genes.expr, p.cut = p.cut, verbose = verbose)
-    println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
-    
+   
+	markers <- cell.markers$markers[rowSums(cell.markers$markers) > 0, ]
+	marker.expr <- cell.markers$marker.expr[rownames(markers), ]
+	println('[INFO] %d low confidence marker genes have been filtered out.', verbose = verbose, dim(cell.markers$markers)[1] - dim(markers)[1])
+
 	if (opt.sigmat) {
-		cell.markers.bak <- assignedCellMarkers(ctsgs.infos, bg.genes.expr, p.cut = 1.0, verbose = FALSE)
+		println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
 		sig.marker.infos <- optimizeSignatures(
-			cell.markers.bak     ,
+			cell.markers         ,
 			colnames(ref.grouped),
 			min.group = min.group,
 			max.group = max.group
@@ -255,7 +255,7 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 		sig.marker.infos <- NULL
 	}
 	return(list(
-		cellMarkers = cell.markers[c('markers', 'marker.expr')], 
+		cellMarkers = list(markers = markers, marker.expr = marker.expr), 
 		sigMatrix   = sig.marker.infos
 	))
 }
