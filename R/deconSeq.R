@@ -58,6 +58,7 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = 
     })
 
     fractions <- addNames(est.res, row.names = colnames(signature), col.names = colnames(bulks)) %>% t
-    if (verbose) print(fractions)
+    println('[INFO] Show deconvolution results....', verbose)
+	if (verbose) print(fractions)
     return(fractions %>% data.frame)
 }
