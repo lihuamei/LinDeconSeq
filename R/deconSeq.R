@@ -34,9 +34,9 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = 
     }
     if (scale) bulks <- scale(bulks)
 	
-	ovp.genes <- intersect(rownames(signature), rownames(bulks))
+    ovp.genes <- intersect(rownames(signature), rownames(bulks))
     signature <- signature[ovp.genes, ] %>% as.matrix
-    bulks <- bulks %>% .[ovp.genes, ]
+	bulks <- bulks %>% .[ovp.genes, ]
 
     est.res <- apply(bulks, 2, function(bulk) {
 		intercept <- ifelse(intercept, 1, 0) 
