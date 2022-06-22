@@ -18,7 +18,7 @@ prerpocessExpr <- function(X, phes, method = c('mean', 'median'), cv.cutoff = 1.
         }
     }
     ref.grouped <- addNames(ref.grouped, col.names = rownames(phes), row.names = rownames(X))
-    ref.grouped <- ref.grouped[matrixStats::rowSds(ref.grouped) != 0, ]
+    ref.grouped <- ref.grouped[rowSds(ref.grouped) != 0, ]
     X.sub <- data.frame(X)[rownames(ref.grouped), ]
 	
     max.indexes <- apply(ref.grouped, 1, which.max)
