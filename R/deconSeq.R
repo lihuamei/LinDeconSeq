@@ -25,7 +25,8 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = 
     if (max(bulks) < 50) bulks <- 2^bulks
     if (min(signature) == 0) signature <- as.matrix(signature + 1)
     if (min(bulks) == 0) bulks <- bulks + 1
-    println('[INFO] There are %d bulk samples need to be deconvoluted', verbose, dim(bulks)[2])
+    bulks[is.na(bulks)] <- mean(bulks, na.rm = TRUE)
+	println('[INFO] There are %d bulk samples need to be deconvoluted', verbose, dim(bulks)[2])
 	
 	if (QN) {
 		xx <- bulks
