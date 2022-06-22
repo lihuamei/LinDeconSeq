@@ -243,8 +243,9 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
     println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
     
 	if (opt.sigmat) {
+		cell.markers.bak <- assignedCellMarkers(ctsgs.infos, bg.genes.expr, p.cut = 1.0, verbose = FALSE)
 		sig.marker.infos <- optimizeSignatures(
-			cell.markers         ,
+			cell.markers.bak     ,
 			colnames(ref.grouped),
 			min.group = min.group,
 			max.group = max.group
