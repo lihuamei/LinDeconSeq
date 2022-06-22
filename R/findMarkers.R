@@ -207,6 +207,12 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
 	if (!is.matrix(phes) && !is.data.frame(phes)) stop(sprintf("'%s' needs to be given as a matrix or data.frame", deparse(substitute(phes))))
 	if (nrow(refs) < 5000) println('[WARN] Number of genes less than 5000, the statistical power may not be sufficien.', println)
 	if (nrow(phes) < 2) stop(println('[ERROR] Number of cell types must be greater than 1.'))
+	if (opt.sigmat) {
+		if (min.group > max.group) println("[WARN] 'min.group' size should be less than 'max.group' szie.")
+	    if (min.group <= 0) stop(sprintf("min.group = %s must be greater than 0", deparse(substitute(min.group))))
+		if (max.group <= 0) stop(sprintf("max.group = %s must be greater than 0", deparse(substitute(max.group))))
+	}
+	
 	if (max(refs) < 50) refs <- 2^refs
     println('[INFO] %d samples and %d genes in the reference profile', verbose, dim(refs)[2], dim(refs)[1])
 	
@@ -237,9 +243,6 @@ findMarkers <- function(refs, phes, QN = TRUE, q.cut = 0.01, p.cut = 0.1, opt.si
     println('[INFO] Optimizing cell type-specific genes to derive signature matrix...', verbose)
     
 	if (opt.sigmat) {
-		if (min.group > max.group) println("[WARN] 'min.group' size should be less than 'max.group' szie ")
-		if (min.group <= 0) stop(sprintf("'%s' must be greater than 0", deparse(substitute(min.group))))
-		if (max.group <= 0) stop(sprintf("'%s' must be greater than 0", deparse(substitute(max.group))))
 		sig.marker.infos <- optimizeSignatures(
 			cell.markers         ,
 			colnames(ref.grouped),
