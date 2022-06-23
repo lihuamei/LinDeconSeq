@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<meta name="author" content="Huamei Li (li_hua_mei@163.com)" />
+
+<meta name="date" content="2022-06-23" />
+
+<title>LinDeconSeq</title>
+
+<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">LinDeconSeq</h1>
+<h4 class="author">Huamei Li (<a href="mailto:li_hua_mei@163.com" class="email">li_hua_mei@163.com</a>)</h4>
+<h4 class="date">2022-06-23</h4>
+
+
+
+<div id="desctiption" class="section level2">
+<h2>Desctiption</h2>
+<p>LinDeconSeq, which consists of 1) identifying marker genes using specificity scoring and mutual linearity strategies across any number of cell types, and 2) predicting cellular fractions of bulk samples using weighted robust linear regression with the marker genes identified in the first stage.</p>
+<p>This method is described in the publication from <em>Li et al., 2020</em> available at <a href="https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-06888-1" class="uri">https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-06888-1</a>.</p>
+</div>
+<div id="identifying-markers-for-each-cell-type-and-build-signature-matrix." class="section level2">
+<h2>Identifying markers for each cell type and build signature matrix.</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(LinDeconSeq)</span></code></pre></div>
+<pre><code>## 载入需要的程辑包：pbapply</code></pre>
+<pre><code>## 载入需要的程辑包：matrixStats</code></pre>
+<pre><code>## 载入需要的程辑包：progress</code></pre>
+<pre><code>## 载入需要的程辑包：dplyr</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;dplyr&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:matrixStats&#39;:
+## 
+##     count</code></pre>
+<pre><code>## The following objects are masked from &#39;package:stats&#39;:
+## 
+##     filter, lag</code></pre>
+<pre><code>## The following objects are masked from &#39;package:base&#39;:
+## 
+##     intersect, setdiff, setequal, union</code></pre>
+<pre><code>## 载入需要的程辑包：MASS</code></pre>
+<pre><code>## 
+## 载入程辑包：&#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre><code>## 载入需要的程辑包：preprocessCore</code></pre>
+<pre><code>## 载入需要的程辑包：fitdistrplus</code></pre>
+<pre><code>## 载入需要的程辑包：survival</code></pre>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>pures <span class="ot">&lt;-</span> shen_orr<span class="sc">$</span>data[, <span class="fu">rowSums</span>(shen_orr<span class="sc">$</span>annotation<span class="sc">$</span>pure) <span class="sc">!=</span> <span class="dv">0</span> ] <span class="sc">%&gt;%</span> t</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(pures)[, <span class="dv">1</span> <span class="sc">:</span> <span class="dv">6</span>] <span class="sc">%&gt;%</span> print</span></code></pre></div>
+<pre><code>##            GSM495209 GSM495210 GSM495211 GSM495212 GSM495213 GSM495214
+## 1367452_at  467.7803  490.4863  472.2785  968.0198  977.6725  951.4587
+## 1367453_at  432.8300  427.9615  420.0629  503.0554  528.4522  489.9533
+## 1367454_at  639.3748  598.5101  631.6529  313.7310  337.5487  325.9744
+## 1367455_at 1075.5101 1094.8317 1089.4398  658.7158  656.8781  662.7839
+## 1367456_at 1238.1591 1273.7103 1278.5230  786.7251  797.5681  776.7528
+## 1367457_at  224.5464  218.2723  201.2102  315.2934  326.7974  302.9110</code></pre>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>phes <span class="ot">&lt;-</span> shen_orr<span class="sc">$</span>phenotype</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(phes) <span class="sc">%&gt;%</span> print</span></code></pre></div>
+<pre><code>##       GSM495209 GSM495210 GSM495211 GSM495212 GSM495213 GSM495214 GSM495215
+## Liver         1         1         1         0         0         0         0
+## Brain         0         0         0         1         1         1         0
+## Lung          0         0         0         0         0         0         1
+##       GSM495216 GSM495217
+## Liver         0         0
+## Brain         0         0
+## Lung          1         1</code></pre>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>markerRes <span class="ot">&lt;-</span> <span class="fu">findMarkers</span>(pures[, <span class="fu">colnames</span>(shen_orr<span class="sc">$</span>phenotype)], shen_orr<span class="sc">$</span>phenotype, <span class="at">QN =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## [INFO] 9 samples and 6669 genes in the reference profile
+## [INFO] 3023 candidate cell type-specific genes detected with q.cut 0.01
+## [INFO] Select seed genes and random permutating...
+## [INFO] Assigning cell type-specific genes to each cell subset
+## [INFO] 1070 low confidence marker genes have been filtered out.
+## [INFO] Optimizing cell type-specific genes to derive signature matrix...
+## [INFO] Group size -&gt; 50, condition number -&gt; 1.518792</code></pre>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">heatmap</span>(markerRes<span class="sc">$</span>sigMatrix<span class="sc">$</span>sig.mat <span class="sc">%&gt;%</span> as.matrix)</span></code></pre></div>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASAAAAEgCAMAAAAjXV6yAAAA4VBMVEUAAAAAADoAAGYAOjoAOmYAOpAAZrY6AAA6AGY6OgA6Ojo6OmY6OpA6ZmY6ZpA6ZrY6kJA6kLY6kNtmAABmAGZmOgBmOjpmOpBmZgBmZmZmZpBmZrZmkLZmkNtmtttmtv99ACWQOgCQOjqQOmaQZjqQZmaQkLaQttuQ29uQ2/+2ZgC2Zjq2Zma2kDq2kGa2kJC2kLa2tpC2tra2ttu2tv+229u22/+2///bkDrbkGbbtmbbtpDbtrbb27bb29vb2//b/7bb////tmb/25D/27b/29v/9Lf//7b//8j//9v///9VBnaWAAAACXBIWXMAAA7DAAAOwwHHb6hkAAANrklEQVR4nO2dD3vcOBHGneaSQFuudENzFFr2Cj1KNqXAHW3cCw1kt2FZf/8PhDSSJUuW15I8cjxevc/Trdf/1v5Fll6PR3JRZe1V8dAHMHUlAFRgCv/wQs9m2rvMgEbc12SOIAMacZcZ0Ij7mswRZEAj7jIDGnFfkzmCDGjEXWZAI+5rMkeQAY24ywxIbDHh2/xpABrjRyKVAY3/QxkQ+i4zIPyDyIDwN4lTBjT+D2VA6LvMgPAPIgPC3yROGdD4P5QBoe8yA8I/iAwIf5M4ZUDj/1AGhL7LDAj/IDIg/E3ilAGN/0MZEPouMyD8g8iA8DeJUwY0/g9lQOi7zIDwDyIDwt8kThnQ+D+UAaHvMgPCP4gMCH+TOGVA4/9QBoS+ywMDNC/FA/rfGPo+WIhsQLGAigyob7sMaO9mGVDPZhnQ/q0yoJ6tMqC+rTKgnq0IACqX1e5NcVqVrLwv2NTJ3fa8eHQN82CqcUL3d5iA+AU2fUCrYlmtF9XVJZt+f81olUv+sYB5MKXPaPsdLiAKJWj7TwahqnZ/YgWFMXn/W1aC2Pf1Us6DKabNWXF0WbJChQuIQiXNAW3P+Zm/v65WUJygqIh5daFhF1e5xC9BVABB6dk8A0ZsavubazlPTlW8mioOF1AJ5YYXHT613PziWkwtYArE6qgVPiASTlq0Yid3UJRgaqXaM5iCtdZF8ZLNQ6yDoM86BUA4ign/FdUs7uZZ+1WwFiwDGqZIQBQuMdtJn8oqSS4wyg6mk6YCyHTSbGq1ZB8MDl+w/b1xTqitGBFAlpP+fMk+ARAsYPXPiWCC76QLMVjL1AFZTvqKA2JX26KSTqjavIa1UJ20HpiGCiDlpKEEsfvTctFYwIXqpAv9QQOQdtJQB/Gvp2qBuFlFddLkABlOWkWB6uYNhOqkNaDsgw4AEKqTbgwcRuYSw5EvIP1ZVESeatRVTR2OhjpIGutS3c0LDXbSTUAFDR+knHQdjl4v67br/XX9ITW8FWsAkpCmDkg7aQhHQwsvm3lwQNIGYTlpCxCJOqh20hCOZlfX8TP4sAoQkpM2AZG4xJRhFuFoXXC4sRYfXEhOulBgRAVEBBA46br6WYkP8wrDctLmapElKPxsvw//EQMQNGD1x6n0z1CyRPGq0Jx0azUCgHB0wIBwnbT9fQaA4s58RoCcMWlpp1n5edqsl5GcNClA7pg0GOs1R3fSYHKIrZgrJg1fhZ0uf/0dakzaAkShBLli0vwr2OnN0//gZndQBWTGpCtlp/XdPKqTJgfIEZNeCDutqp00TpoKICsmrT21BpTESRezMIoxZ35QgJI5aZEgRB9Q+Jn7AiJVB2knfXRZ50mf3CWKSZMCZDppSOeA7GjRuKWJSVMCZDnpOp1jvZQZ00li0pQAWU5apnOwoiJjingx6da7higB0kFolR0taeHFpBvPm8kB6sqTXmLGpF2ACNzNu5y0zpPGjEk7AJGIByHpgAFhOWknoDmkv/hpxoDaPQ6NZA+0HodUATl6HBrJHmg9DokCcvc4rJM9KsQeh3iV9KiAnD0OVbIHZo9D0oCsHoc62QOxx6ELEJX0F8tJ62QPzB6HlAFZPQ71B2aPQwOQThCaPiAchQKqZER6BoCSOOkaEIVLDEczBtTO7tCJHbqvhhCaky7qf0UVfuyjIFXH7cju0Ikd9QIpvFas0DMmDsiV3dFM7BADeKA7aUIlyJHd0UjsEAsqdCctAEFDTwKQI7ujfiSG1uPQBYhKCWpnd8jEjlJFpZGdtLi8yABqZ3fIxA7Zg77Cd9LykwIgHB0wIFwnrW7C6m/0AfnJE5D9hQKgtpOuTfQJvpNufZn+Y5+Wk2ZT3ETr6LQ+reGtGD1AlpMWU9xE6+g0rIfkpO0vFB4cGk4apsBE6+g0aICTNuplooDM7A6ojYwOiIOcdOFYo55HBJAZk14oE71EcdIzAGTFpLWJRnHSnYBiY9IjA8JRFKDImPTEAA120vsAUbjEcDRjQB09DiFjWtdBQlFO2glINvwEALl7HLIWq86YXurTwmvF1JzJA3LFpOEDMqbrFI9BTpo2IFdM+kqOFbh5vVI+aIiT3gOIwCXmiEnrwHRtp9GdtJhDJg3Yiknrh2Moo+B1AgJG1X+DNT4gV0y6Oaprhe6kGwvHONsIdZ9PnOJLEHlASZz0nAD5acaA2k5aPlQ1RuIUQnPSNR4CgFwxaZHwKhas0jlpEs/FnDFpCLbyBbUjSuOkSQByxaRlP0O24OoyoZOW3cJJALJ6HIopowQlcNJizHYSgOyYtIBSNuugBE6aUPqLHZMWhQprPOk9gCi0YkiyTr9oqhMQDR/UpygnXbSn9awGuDkA8lMQoMZ/BAC1x5OWNY85FCfI20n7AiJQghzjSYu2iy8QH0r+rdh8ALnGkwb3Awvk0irYSXsBKmi0Yu3xpKV/Ni6xQCftA0hAogHIHE/6swNQoJN2AbLbfbmQAiBrPGnpnw1AgU7aAahrIQVAzvGkTUCBTtoPEI06CEdxgEjUQX3CctKtGVS6IuAoBhCRS6x20tpE61dERWd37AfUaMymD6jppKWJ1i8Kj87u2AtIzydQgrST1iZavyg8OrvDC5DIUZw4IO2kGyZavSg8OrvDB1BFogQZrzJsJnY0hsLjGu6kOwjRye7QJrpULwoPyu5wRBHnAsgy0dYrw2EtDyfdBaXnEps8IBxFACqIJFD1ydtJBwPKJcgJyKinKAAyYtJ6UGlZ/QS8mcUXkElq8oDMmHSlBpUWrwwPeTNLJyBL5pKpA7Ji0npQaQEo5M0svi2X8WXygKyYdGNQaf7K8KA3s4QCInKJWTFp3e2QvzI86M0s/t5HXWtUAOmYtDkU3mnQm1l83bNJigSgRu9ClSwth3ENeDNLKKCKyM0qjqIA0Ygo9mmwk+6GMw9AfvIFZNohEoDaMWlrXkNRTtpezyQ1eUCtmDRvr4x5+uwQWjF7weQBWTFpmGrNq8KddKeszSYPyIpJy3C0OY8r0El3yrrRoAKo+XJ5ldgROnZHICDxUIMGIB2TLpWX1vNgrUAn3Q3IutOgAch6F4I1DxTopH1QVUSaeRxFACLSzPcqykn7U5r+cMk4CgakaqLJA3LGpNWLws08aS3bU9sPDr01eUDKNYsYqzkUnpUnrdVqz/zvTokB0q5ZAjKGwrPypPVUy1PHVEBEpHoclhBdNYbCs/Kk9VRECSKr2jVDENoaCs/Kk9ZTBwZIxaRPraHwrDxpPXVggBrvEjOHwrPypPVUy1PPGBCODhiQdtL7PPUBA/ITNqDu4C5RYQNaFU/nhQgZkP32Sfp6cEC7H14aevXjvz02umls8bukRRb/Euu4C+wSQ2rr6A892/x81lw9bZHFBsSz3PrOz5ADUB/jjcGHFqDdv358y475+LHUE4+DZzdHR69uq+r2Azvx57df3vbF+Va8kHlciCjCr4NC/7qsPDz6pLbmaFZ1clP3b4RdxkP08ICatRa7HTqtRCrh3t8YsaV8cCdtnK740kMgA+ojsOp/FoGnKQDSp8vro35A4kIcSUkAsbbsp7vKs51ZNU5XTDMA++ogWO35WDc0CQD9/Euonbfn33zyWZ3hKJ7B6e6uwAJ9Pd/fijHvfRZqJeKFDohHdiUgz6qCB4mL4ycXnGuxgIZw7xUW0VIOEDog7uK+/cf5o2teHvyOXd85cBPOwe61ObQBrcEGb8/5UfcYPq3dzQVn9OQdv9J2P/x5SgGTBDer/LkBAOqtbCkI+17sDVQ8AtAsgkNp4kEZUJeiAHmHv7YXvE1nn4ZINfPyQW5QHeQf/lJ3IoRbsRKgACAOy6MVCwh/zQEQP/qTTxzQbuV37KOGv8KFbhT5nUPBTPHj/tApaNzwV7jw78U2hi/u1dSbugQ3q9IXP37lZRKHA7ol9dgnXDHhr/sPwhOwBv+MViW9+3vwnzMi/FXSbcXYBfPNu0BGweEv0xgcvQ77uUAlearx5J3/FhHhL24M3n15cfQXeJKWuAlET3+5En/eb72iiVVMdEe6dch03qSuglJU0l/fiqL/ysv9hQOSoUqR3Fv6xpxilaYVu7mAkz32a+kDJY3BWnQr2P+QcbhSNfO7mxepWhgJaHMGGaupfWZCH/T1j2kAjRuUS1aCPpwl8yii3tm94ZiS19JpHhzCozHW3H/0WNfKMPPIF+O9Tl7zZuz0jocMyNVBovbxNYwx0Z0SVqv9Iq1WTLZfR97tV1T46/MZX03ccSR+TJ/ESXu7REP3Ny/8bxvgFv7r28chpj1K+IAGHLL9asYOjZqsjn03/9Ogg1971SijJqs/fDyoKVYA+9ukA8swM+R17kQBoTzUWwenfSYXHiCEZ1Y8dcrD9gUnqw/RgwNqlDmw3/1lIyZZPV4PXgdZSD2aedpPVoPVPN1jLw91YICmrpSARMNGXEkBTfypspemBSiozLHW7GP6W46JAerf4v5vLyELdieencQFDgJEDBAk49fp5iLylLhfCzFAK4llwSd+9fIieStPDBDPznp+e/tXZX942JVWyLUpfEB17n6p7knK1DFXUoDkEzFrXC1yTzWU0AGpxXo9Qg8O729tfcmAGnIOEJABaUUACi5zpAHZj5A9el4EIyUNKFwZUI+iytyjj/Wl+DGyIQgUqYAZSkMQqAyoR6QAhV+Uw0UK0EMoA+pRBtSj/wP93XUH6v5IJAAAAABJRU5ErkJggg==" /><!-- --></p>
+</div>
+<div id="deconvolution-for-mixture-samples." class="section level2">
+<h2>Deconvolution for mixture samples.</h2>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>fractions <span class="ot">&lt;-</span> <span class="fu">deconSeq</span>(shen_orr<span class="sc">$</span>data <span class="sc">%&gt;%</span> t, markerRes<span class="sc">$</span>sigMatrix<span class="sc">$</span>sig.mat, <span class="at">verbose =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<pre><code>## [INFO] There are 42 bulk samples need to be deconvoluted
+##                  Liver        Brain         Lung
+## GSM495209 9.995712e-01 0.0004288179 0.000000e+00
+## GSM495210 9.995061e-01 0.0004938515 0.000000e+00
+## GSM495211 9.956582e-01 0.0036376592 7.041480e-04
+## GSM495212 0.000000e+00 1.0000000000 0.000000e+00
+## GSM495213 9.291706e-04 0.9986788620 3.919674e-04
+## GSM495214 5.796167e-04 0.9993892521 3.113119e-05
+## GSM495215 4.002953e-06 0.0000000000 9.999960e-01
+## GSM495216 0.000000e+00 0.0000000000 1.000000e+00
+## GSM495217 0.000000e+00 0.0000000000 1.000000e+00
+## GSM495218 8.380125e-02 0.3066126236 6.095861e-01
+## GSM495219 9.013318e-02 0.3073880816 6.024787e-01
+## GSM495220 8.759564e-02 0.3053518980 6.070525e-01
+## GSM495221 6.544839e-01 0.0914730557 2.540430e-01
+## GSM495222 6.490951e-01 0.0914795481 2.594253e-01
+## GSM495223 6.523207e-01 0.0887322675 2.589470e-01
+## GSM495224 2.952270e-01 0.6509099846 5.386302e-02
+## GSM495225 2.943407e-01 0.6491998940 5.645944e-02
+## GSM495226 3.059917e-01 0.6407750804 5.323327e-02
+## GSM495227 6.280094e-01 0.3051263064 6.686430e-02
+## GSM495228 6.344095e-01 0.3010209770 6.456955e-02
+## GSM495229 6.319751e-01 0.3010156579 6.700925e-02
+## GSM495230 4.464379e-01 0.4494756881 1.040864e-01
+## GSM495231 4.688540e-01 0.4321675433 9.897847e-02
+## GSM495232 4.735214e-01 0.4321313647 9.434719e-02
+## GSM495233 5.304824e-01 0.2391622392 2.303553e-01
+## GSM495234 5.329330e-01 0.2389048131 2.281621e-01
+## GSM495235 5.331426e-01 0.2363373910 2.305200e-01
+## GSM495236 4.927669e-01 0.3235672910 1.836658e-01
+## GSM495237 4.988868e-01 0.3172577046 1.838555e-01
+## GSM495238 4.907264e-01 0.3250466413 1.842269e-01
+## GSM495239 5.356287e-01 0.3215945800 1.427767e-01
+## GSM495240 5.317241e-01 0.3218192892 1.464566e-01
+## GSM495241 5.305241e-01 0.3285337741 1.409422e-01
+## GSM495242 4.945030e-01 0.4050589522 1.004381e-01
+## GSM495243 5.092395e-01 0.3925026497 9.825782e-02
+## GSM495244 5.008963e-01 0.3986931994 1.004105e-01
+## GSM495245 5.743211e-01 0.3657359346 5.994296e-02
+## GSM495246 5.720378e-01 0.3648056213 6.315654e-02
+## GSM495247 5.770924e-01 0.3629614611 5.994618e-02
+## GSM495248 6.057886e-01 0.3694192456 2.479219e-02
+## GSM495249 6.110662e-01 0.3662804061 2.265338e-02
+## GSM495250 6.090999e-01 0.3666393370 2.426080e-02</code></pre>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>true.prop <span class="ot">&lt;-</span> shen_orr<span class="sc">$</span>annotation<span class="sc">$</span>mixture[<span class="fu">rownames</span>(fractions), <span class="fu">colnames</span>(fractions)]</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>plot.df <span class="ot">&lt;-</span> <span class="fu">cbind.data.frame</span>(<span class="at">Pred =</span> <span class="fu">unlist</span>(fractions), <span class="at">Actual =</span> <span class="fu">unlist</span>(<span class="fu">data.frame</span>(true.prop)), <span class="at">Sample =</span> <span class="fu">rownames</span>(fractions))</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(plot.df, <span class="fu">aes</span>(<span class="at">x =</span> Pred, <span class="at">y =</span> Actual)) <span class="sc">+</span> <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">shape =</span> <span class="dv">21</span>, <span class="at">color =</span> <span class="st">&#39;red&#39;</span>) <span class="sc">+</span> <span class="fu">theme_classic</span>(<span class="at">base_size =</span> <span class="dv">14</span>) <span class="sc">+</span> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&#39;none&#39;</span>) <span class="sc">+</span> <span class="fu">geom_smooth</span>(<span class="at">method =</span> lm) <span class="sc">+</span> <span class="fu">stat_cor</span>(<span class="at">method =</span> <span class="st">&quot;pearson&quot;</span>)</span></code></pre></div>
+<pre><code>## `geom_smooth()` using formula &#39;y ~ x&#39;</code></pre>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div>
+<pre><code>## R version 4.1.0 (2021-05-18)
+## Platform: x86_64-w64-mingw32/x64 (64-bit)
+## Running under: Windows 10 x64 (build 22000)
+## 
+## Matrix products: default
+## 
+## locale:
+## [1] LC_COLLATE=Chinese (Simplified)_China.936 
+## [2] LC_CTYPE=Chinese (Simplified)_China.936   
+## [3] LC_MONETARY=Chinese (Simplified)_China.936
+## [4] LC_NUMERIC=C                              
+## [5] LC_TIME=Chinese (Simplified)_China.936    
+## 
+## attached base packages:
+## [1] stats     graphics  grDevices utils     datasets  methods   base     
+## 
+## other attached packages:
+##  [1] ggpubr_0.4.0          ggplot2_3.3.5         LinDeconSeq_0.2      
+##  [4] fitdistrplus_1.1-5    survival_3.2-11       preprocessCore_1.54.0
+##  [7] MASS_7.3-54           dplyr_1.0.7           progress_1.2.2       
+## [10] matrixStats_0.59.0    pbapply_1.4-3        
+## 
+## loaded via a namespace (and not attached):
+##  [1] Rcpp_1.0.7        lattice_0.20-44   tidyr_1.1.3       prettyunits_1.1.1
+##  [5] assertthat_0.2.1  digest_0.6.27     utf8_1.2.1        R6_2.5.0         
+##  [9] cellranger_1.1.0  backports_1.2.1   evaluate_0.14     highr_0.9        
+## [13] pillar_1.6.1      rlang_0.4.11      curl_4.3.2        readxl_1.3.1     
+## [17] data.table_1.14.0 car_3.0-11        jquerylib_0.1.4   Matrix_1.3-3     
+## [21] rmarkdown_2.9     labeling_0.4.2    splines_4.1.0     stringr_1.4.0    
+## [25] foreign_0.8-81    munsell_0.5.0     broom_0.7.8       compiler_4.1.0   
+## [29] xfun_0.24         pkgconfig_2.0.3   mgcv_1.8-35       htmltools_0.5.1.1
+## [33] tidyselect_1.1.1  tibble_3.1.2      rio_0.5.27        fansi_0.5.0      
+## [37] crayon_1.4.1      withr_2.4.2       grid_4.1.0        nlme_3.1-152     
+## [41] jsonlite_1.7.2    gtable_0.3.0      lifecycle_1.0.0   DBI_1.1.1        
+## [45] magrittr_2.0.1    scales_1.1.1      zip_2.2.0         carData_3.0-4    
+## [49] stringi_1.6.2     farver_2.1.0      ggsignif_0.6.2    bslib_0.2.5.1    
+## [53] ellipsis_0.3.2    generics_0.1.0    vctrs_0.3.8       openxlsx_4.2.4   
+## [57] tools_4.1.0       forcats_0.5.1     glue_1.6.2        purrr_0.3.4      
+## [61] hms_1.1.0         abind_1.4-5       parallel_4.1.0    yaml_2.2.1       
+## [65] colorspace_2.0-2  rstatix_0.7.0     knitr_1.33        haven_2.4.1      
+## [69] sass_0.4.0</code></pre>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

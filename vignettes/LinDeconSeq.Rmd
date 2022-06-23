@@ -1,0 +1,46 @@
+---
+title: "LinDeconSeq"
+author: "Huamei Li (li_hua_mei@163.com)"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{LinDeconSeq}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+## Desctiption
+
+LinDeconSeq, which consists of 1) identifying marker genes using specificity scoring and mutual linearity strategies across any number of cell types, and 2) predicting cellular fractions of bulk samples using weighted robust linear regression with the marker genes identified in the first stage. 
+
+This method is described in the publication from *Li et al., 2020* available
+at <https://bmcgenomics.biomedcentral.com/articles/10.1186/s12864-020-06888-1>.
+
+## Identifying markers for each cell type and build signature matrix.
+
+```{r, eval = TRUE}
+library(LinDeconSeq)
+library(dplyr)
+pures <- shen_orr$data[, rowSums(shen_orr$annotation$pure) != 0 ] %>% t
+head(pures)[, 1 : 6] %>% print
+
+phes <- shen_orr$phenotype
+head(phes) %>% print
+markerRes <- findMarkers(pures[, colnames(shen_orr$phenotype)], shen_orr$phenotype, QN = TRUE)
+heatmap(markerRes$sigMatrix$sig.mat %>% as.matrix)
+
+```
+
+## Deconvolution for mixture samples.
+
+```{r, eval = TRUE}
+library(ggplot2)
+library(ggpubr)
+fractions <- deconSeq(shen_orr$data %>% t, markerRes$sigMatrix$sig.mat, verbose = TRUE)
+true.prop <- shen_orr$annotation$mixture[rownames(fractions), colnames(fractions)]
+
+plot.df <- cbind.data.frame(Pred = unlist(fractions), Actual = unlist(data.frame(true.prop)), Sample = rownames(fractions))
+ggplot(plot.df, aes(x = Pred, y = Actual)) + geom_point(size = 3, shape = 21, color = 'red') + theme_classic(base_size = 14) + theme(legend.position = 'none') + geom_smooth(method = lm) + stat_cor(method = "pearson")
+
+sessionInfo()
+```

@@ -60,6 +60,10 @@ GSM495223 6.523207e-01 0.0887322675 2.589470e-01
 ```
 ![LinDeconSeq\_fractions](data/fractions.png)
 
+# More Information
+--------------------
+Please see [Tutorial](https://lihuamei.github.io//LinDeconSeq/inst/LinDeconSeq.html).
+
 # Citation
 ----------------------------
 Please cite the publication: ***Li H, Sharma A, Ming W, et al. A deconvolution method and its application in analyzing the cellular fractions in acute myeloid leukemia samples[J]. BMC genomics, 2020, 21(1): 1-15.***<br>
