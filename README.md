@@ -62,7 +62,7 @@ GSM495223 6.523207e-01 0.0887322675 2.589470e-01
 
 # More Information
 --------------------
-Please see [Tutorial](https://github.com/lihuamei/LinDeconSeq/inst/LinDeconSeq.html).
+Please see [Tutorial](https://github.com/lihuamei/LinDeconSeq/tree/master/inst/LinDeconSeq.html).
 
 # Citation
 ----------------------------
