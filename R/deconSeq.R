@@ -15,13 +15,9 @@ deconSeq <- function(bulks, signature, weight = TRUE, intercept = TRUE, scale = 
     if (missing(bulks) || missing(signature)) {
         stop("[ERROR] bulk and pures must be fed simultaneously")
     }
-    if (class(signature) != 'data.frame' && class(signature) != 'matrix') {
-        stop('[ERROR] Signature must be data.frame or matrix, exiting...')
-    }
-    if (class(bulks) != 'data.frame' && class(bulks) != 'matrix') {
-        stop('[ERROR] bulks must be data.frame or matrix, exiting...')
-    }
-	if (max(signature) < 50) signature <- 2^signature
+    bulks <- data.frame(bulks)
+    signature <- data.frame(signature)
+    if (max(signature) < 50) signature <- 2^signature
     if (max(bulks) < 50) bulks <- 2^bulks
     if (min(signature) == 0) signature <- as.matrix(signature + 1)
     if (min(bulks) == 0) bulks <- bulks + 1
